@@ -8,6 +8,8 @@
 // додати нотіфлікс повідомлення
 // додати сімпллайтбокс галерею
 
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
 const refs = {
   searchForm: document.querySelector(''),
 };
