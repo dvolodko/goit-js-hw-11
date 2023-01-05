@@ -1,1 +1,12 @@
 @import '~node_modules/modern-normalize/modern-normalize.css';
+
+.search-header {
+  background-color: lightblue;
+  height: 40px;
+  width: 100%;
+}
+
+.search-form {
+  margin-right: auto;
+  margin-left: 100px;
+}
