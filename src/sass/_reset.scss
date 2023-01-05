@@ -19,7 +19,8 @@ a {
 }
 
 img {
-  display: block;
+  display: flex;
+  // flex-grow: 2;
   max-width: 100%;
   height: auto;
 }

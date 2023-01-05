@@ -1,12 +1,89 @@
 @import '~node_modules/modern-normalize/modern-normalize.css';
 
+$gap: 15px;
+
+body {
+  display: block;
+}
+
 .search-header {
   background-color: lightblue;
   height: 40px;
   width: 100%;
+  display: flex;
 }
 
 .search-form {
-  margin-right: auto;
-  margin-left: 100px;
+  margin: auto;
+}
+
+.button-container {
+  text-align: center;
+  padding: 15px;
+}
+
+.gallery {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+  @include mq(tablet) {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.photo-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12), 0 4px 4px rgba(0, 0, 0, 0.06),
+    1px 4px 6px rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+  @include mq(tablet) {
+    flex-basis: calc((100% - 1 * $gap) / 2);
+  }
+  @include mq(desktop) {
+    flex-basis: calc((100% - 3 * $gap) / 4);
+  }
+}
+
+.info {
+  display: flex;
+  padding: 10px;
+}
+
+.info-item {
+  padding: 5px;
+}
+
+button {
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.62;
+  text-align: center;
+  letter-spacing: 0.03em;
+  color: whitesmoke;
+  background-color: lightblue;
+  border: 0;
+  border-radius: 4px;
+  padding: 6px 22px;
+  box-shadow: 0;
+  &:hover,
+  &:focus {
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 1px rgba(0, 0, 0, 0.14),
+      0px 2px 1px rgba(0, 0, 0, 0.2);
+  }
+}
+
+input {
+  padding: 5px;
+  height: 30px;
+  border-radius: 5px;
+  border: 0;
+}
+
+.is-hidden {
+  display: none;
 }
