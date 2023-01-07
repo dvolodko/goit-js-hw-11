@@ -21,7 +21,6 @@ const refs = {
 const apiService = new ApiService();
 const loadMoreBtn = new LoadMoreBtn({ selector: '.load-more', hidden: true });
 let totalHits = 0;
-let endOfContent = false;
 
 refs.searchForm.addEventListener('submit', onSearch);
 loadMoreBtn.refs.button.addEventListener('click', onLoadMore);
@@ -29,48 +28,59 @@ loadMoreBtn.refs.button.addEventListener('click', onLoadMore);
 async function onSearch(e) {
   e.preventDefault();
   apiService.query = e.currentTarget.elements.searchQuery.value.trim();
+  if (!apiService.query) {
+    refs.gallery.innerHTML = '';
+    loadMoreBtn.hide();
+    Notify.failure('Sorry, you need to search something. Please try again.');
+    return;
+  }
+  refs.gallery.innerHTML = '';
   loadMoreBtn.show();
   loadMoreBtn.disable();
   apiService.resetPage();
-  const pictures = await apiService.getPictures();
-  totalHits = pictures.data.totalHits;
-  if (totalHits === 0) {
-    Notify.failure(
-      'Sorry, there are no images matching your search query. Please try again.'
-    );
-  } else if (40 * (apiService.page - 1) > totalHits) {
-    Notify.success(`Hooray! We found ${totalHits} images.`);
-    renderCards(pictures.data.hits);
-    loadMoreBtn.enable();
-    endOfContent = true;
-  } else {
-    Notify.success(`Hooray! We found ${totalHits} images.`);
-    renderCards(pictures.data.hits);
-    loadMoreBtn.enable();
-    endOfContent = false;
+  try {
+    const pictures = await apiService.getPictures();
+    totalHits = pictures.data.totalHits;
+    if (totalHits === 0) {
+      Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+      loadMoreBtn.hide();
+    } else if (totalHits <= 40) {
+      Notify.success(`Hooray! We found ${totalHits} images.`);
+      renderCards(pictures.data.hits);
+      loadMoreBtn.hide();
+      Notify.failure(
+        "We're sorry, but you've reached the end of search results."
+      );
+    } else {
+      Notify.success(`Hooray! We found ${totalHits} images.`);
+      renderCards(pictures.data.hits);
+      loadMoreBtn.enable();
+    }
+  } catch (error) {
+    console.log(error.message);
   }
-  console.log(endOfContent);
 }
 
 async function onLoadMore() {
-  loadMoreBtn.disable();
-  if (endOfContent) {
-    Notify.failure(
-      "We're sorry, but you've reached the end of search results."
-    );
-    loadMoreBtn.enable();
-  } else if (40 * apiService.page > totalHits) {
-    const pictures = await apiService.getPictures();
-    renderCards(pictures.data.hits);
-    loadMoreBtn.enable();
-    endOfContent = true;
-  } else {
-    const pictures = await apiService.getPictures();
-    renderCards(pictures.data.hits);
-    loadMoreBtn.enable();
-    endOfContent = false;
+  try {
+    loadMoreBtn.disable();
+    if (40 * apiService.page > totalHits) {
+      const pictures = await apiService.getPictures();
+      renderCards(pictures.data.hits);
+      loadMoreBtn.hide();
+      Notify.failure(
+        "We're sorry, but you've reached the end of search results."
+      );
+    } else {
+      const pictures = await apiService.getPictures();
+      renderCards(pictures.data.hits);
+      loadMoreBtn.enable();
+    }
+  } catch (error) {
+    console.log(error.message);
   }
-  console.log(endOfContent);
 }
 
 function renderCards(pictureCards) {
@@ -95,5 +105,5 @@ function renderCards(pictureCards) {
   </div>`
     )
     .join('');
-  refs.gallery.innerHTML = markup;
+  refs.gallery.insertAdjacentHTML('beforeend', markup);
 }
